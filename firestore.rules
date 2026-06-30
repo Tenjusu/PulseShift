@@ -1,0 +1,62 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function owns(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    match /workers/{uid} {
+      allow create: if owns(uid);
+      allow read, update: if owns(uid);
+    }
+
+    match /facilities/{uid} {
+      allow create: if owns(uid);
+      allow read: if signedIn();
+      allow update: if owns(uid);
+    }
+
+    match /shifts/{shiftId} {
+      allow read: if signedIn();
+
+      allow create: if signedIn()
+        && request.resource.data.facilityId == request.auth.uid
+        && request.resource.data.status == 'open'
+        && request.resource.data.claimedBy == null;
+
+      allow update: if signedIn()
+        && resource.data.status == 'open'
+        && request.resource.data.status == 'claimed'
+        && request.resource.data.claimedBy == request.auth.uid
+        && request.resource.data.facilityId == resource.data.facilityId;
+
+      allow update: if signedIn()
+        && resource.data.claimedBy == request.auth.uid
+        && request.resource.data.claimedBy == resource.data.claimedBy
+        && request.resource.data.facilityId == resource.data.facilityId
+        && request.resource.data.status in ['claimed', 'in_progress', 'completed'];
+
+      allow update: if signedIn()
+        && resource.data.facilityId == request.auth.uid;
+    }
+
+    match /payouts/{payoutId} {
+      allow read: if signedIn() && resource.data.workerId == request.auth.uid;
+      allow create, update, delete: if false;
+    }
+
+    match /applications/{applicationId} {
+      allow read: if signedIn()
+        && (resource.data.workerId == request.auth.uid || resource.data.facilityId == request.auth.uid);
+      allow create: if signedIn()
+        && request.resource.data.workerId == request.auth.uid;
+      allow update: if signedIn()
+        && resource.data.facilityId == request.auth.uid;
+    }
+  }
+}
