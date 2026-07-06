@@ -95,7 +95,7 @@ struct ShiftGlassCard: View {
             } else if shift.clockedIn {
                 Label("Clocked In", systemImage: "checkmark.circle.fill")
                     .foregroundStyle(.teal)
-                    .accessibilityAddTraits(.isStatusElement)
+                    .accessibilityLabel("Clocked in")
             } else {
                 Button("View Details") {}
                     .buttonStyle(.bordered)
@@ -124,7 +124,6 @@ extension View {
         if #available(iOS 26.0, *) {
             self
                 .glassEffect(.regular, in: .rect(cornerRadius: cornerRadius))
-                .accessibilityRespondsToUserInteraction(true)
         } else {
             self
                 .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
