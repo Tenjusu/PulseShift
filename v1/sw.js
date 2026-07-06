@@ -1,4 +1,4 @@
-const CACHE_NAME = "pulseshift-v1-liquid-glass-v2";
+const CACHE_NAME = "pulseshift-v1-liquid-glass-v3";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -7,10 +7,12 @@ const APP_SHELL = [
   "./liquid-glass.css",
   "./runtime-patch.js"
 ];
-const PATCH_HEAD = '<link rel="stylesheet" href="./liquid-glass.css?v=2" />\n<script src="./runtime-patch.js?v=2"></script>';
+const PATCH_HEAD = '<link rel="stylesheet" href="./liquid-glass.css?v=3" />\n<script src="./runtime-patch.js?v=3"></script>';
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => Promise.all(APP_SHELL.map((asset) => cache.add(asset).catch(() => null))))
+  );
   self.skipWaiting();
 });
 
