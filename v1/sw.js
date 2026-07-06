@@ -1,5 +1,13 @@
-const CACHE_NAME = "pulseshift-v1-cache";
-const APP_SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg"];
+const CACHE_NAME = "pulseshift-v1-liquid-glass-v2";
+const APP_SHELL = [
+  "./",
+  "./index.html",
+  "./manifest.webmanifest",
+  "./icon.svg",
+  "./liquid-glass.css",
+  "./runtime-patch.js"
+];
+const PATCH_HEAD = '<link rel="stylesheet" href="./liquid-glass.css?v=2" />\n<script src="./runtime-patch.js?v=2"></script>';
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
@@ -11,9 +19,45 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
+function isHtmlRequest(request) {
+  const url = new URL(request.url);
+  return request.mode === "navigate" || url.pathname.endsWith("/v1/") || url.pathname.endsWith("/v1/index.html");
+}
+
+async function patchedHtmlResponse(request) {
+  const cache = await caches.open(CACHE_NAME);
+  let response;
+  try {
+    response = await fetch(request);
+    cache.put(request, response.clone());
+  } catch (_) {
+    response = await caches.match(request) || await caches.match("./index.html");
+  }
+
+  if (!response) return fetch(request);
+  let html = await response.text();
+  if (!html.includes("runtime-patch.js")) {
+    html = html.replace("</head>", `${PATCH_HEAD}\n</head>`);
+  }
+
+  return new Response(html, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-cache" }
+  });
+}
+
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
-  event.respondWith(caches.match(event.request).then((cached) => cached || fetch(event.request).catch(() => caches.match("./index.html"))));
+
+  if (isHtmlRequest(event.request)) {
+    event.respondWith(patchedHtmlResponse(event.request));
+    return;
+  }
+
+  event.respondWith(
+    caches.match(event.request).then((cached) => cached || fetch(event.request).catch(() => caches.match("./index.html")))
+  );
 });
 
 self.addEventListener("push", (event) => {
