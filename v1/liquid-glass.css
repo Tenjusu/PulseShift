@@ -1,0 +1,94 @@
+/* PulseShift Liquid Glass layer for the installed iPhone PWA.
+   This is a web approximation; the native SwiftUI version lives in /ios-swiftui. */
+:root {
+  --ps-glass: rgba(255, 255, 255, 0.68);
+  --ps-glass-border: rgba(255, 255, 255, 0.42);
+  --ps-glass-highlight: rgba(255, 255, 255, 0.74);
+}
+
+body.dark {
+  --ps-glass: rgba(16, 35, 59, 0.72);
+  --ps-glass-border: rgba(223, 247, 251, 0.16);
+  --ps-glass-highlight: rgba(223, 247, 251, 0.10);
+}
+
+body {
+  background:
+    radial-gradient(circle at 16% 0%, rgba(20, 184, 166, 0.16), transparent 30%),
+    linear-gradient(180deg, var(--cream), var(--cream-dark)) !important;
+}
+
+.app {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.06)),
+    var(--cream) !important;
+}
+
+.card,
+.theme-toggle {
+  background: var(--ps-glass) !important;
+  border-color: var(--ps-glass-border) !important;
+  box-shadow: var(--shadow), inset 0 1px 0 var(--ps-glass-highlight) !important;
+  backdrop-filter: blur(24px) saturate(1.25);
+  -webkit-backdrop-filter: blur(24px) saturate(1.25);
+}
+
+.soft {
+  background: rgba(237, 233, 225, 0.62) !important;
+  backdrop-filter: blur(18px) saturate(1.15);
+  -webkit-backdrop-filter: blur(18px) saturate(1.15);
+}
+
+body.dark .soft {
+  background: rgba(14, 32, 52, 0.70) !important;
+}
+
+.tabs {
+  background: rgba(10, 22, 40, 0.78) !important;
+  box-shadow: 0 -10px 34px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+  backdrop-filter: blur(24px) saturate(1.35);
+  -webkit-backdrop-filter: blur(24px) saturate(1.35);
+}
+
+.btn,
+.tab,
+.role,
+.upload {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:focus-visible,
+.tab:focus-visible,
+.role:focus-visible,
+.theme-toggle:focus-visible {
+  outline: 3px solid var(--teal-light);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .card,
+  .soft,
+  .tabs,
+  .theme-toggle {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .card,
+  .soft,
+  .theme-toggle {
+    background: var(--white) !important;
+  }
+
+  .tabs {
+    background: var(--navy-ui) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  .pulse {
+    animation: none !important;
+    transition: none !important;
+  }
+}
