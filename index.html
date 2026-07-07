@@ -5,11 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#0a1628" />
     <title>PulseShift</title>
-    <link rel="manifest" href="manifest.webmanifest" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="canonical" href="https://tenjusu.github.io/PulseShift/v1/" />
+    <meta http-equiv="refresh" content="0; url=./v1/" />
+    <style>
+      html, body { height: 100%; }
+      body {
+        margin: 0;
+        display: grid;
+        place-items: center;
+        background: #0a1628;
+        color: #dff7fb;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      a { color: #14b8a6; }
+    </style>
+    <script>
+      const target = new URL("./v1/", window.location.href);
+      target.search = window.location.search;
+      target.hash = window.location.hash;
+      window.location.replace(target.href);
+    </script>
   </head>
   <body>
-    <div id="app"></div>
-    <script src="app.js"></script>
+    <main>
+      <p>Opening PulseShift...</p>
+      <p><a href="./v1/">Continue to PulseShift</a></p>
+    </main>
   </body>
 </html>
